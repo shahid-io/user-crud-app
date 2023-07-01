@@ -1,0 +1,14 @@
+.user-wrapper {
+    align-items: center;
+    background-color: aliceblue;
+}
+
+.profile-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+input[type='file'] {
+    display: none;
+}
