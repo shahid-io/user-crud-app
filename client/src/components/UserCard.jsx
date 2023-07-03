@@ -40,7 +40,7 @@ const UserCard = (props) => {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleUpdate = async (values) => {
@@ -92,7 +92,7 @@ const UserCard = (props) => {
 
   return (
     <div className="container p-5">
-      <div className="card user-card p-3">
+      <div className="user-card card row p-3">
         <div className="profile-container">
           <img src={profileImage} alt="Profile" className="profile_img" />
         </div>
@@ -146,6 +146,7 @@ const UserCard = (props) => {
               {({ errors, touched }) => (
                 <Form>
                   <div className="container mb-3">
+                    {/* profile image */}
                     <label htmlFor="profile">
                       <img
                         src={profileImage}

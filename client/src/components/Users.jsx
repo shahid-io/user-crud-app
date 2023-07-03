@@ -43,7 +43,7 @@ const Users = () => {
   };
 
   return (
-    <div className="container mt-3">
+    <div className="container">
       <div className="p-3">
         {users.map((user) => (
           <UserCard
@@ -58,13 +58,15 @@ const Users = () => {
             updateUser={(updatedUser) => handleUpdate(user._id, updatedUser)}
           ></UserCard>
         ))}
-        <Link className="end">
-          <BsArrowReturnLeft
-            className="back-btn"
-            size={40}
-            onClick={() => navigate(-1)}
-          />
-        </Link>
+        {users.length > 0 ? (
+          <Link className="end">
+            <BsArrowReturnLeft
+              className="back-btn"
+              size={40}
+              onClick={() => navigate(-1)}
+            />
+          </Link>
+        ) : null}
       </div>
     </div>
   );
