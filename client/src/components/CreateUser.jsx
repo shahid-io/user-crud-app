@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "../styles/CreateUser.css";
-import { storage } from "../firebase";
 import Button from "react-bootstrap/Button";
-
+import { storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import avatar from "../assets/profile.png";
 import axios from "axios";
@@ -14,7 +13,7 @@ const CreateUser = () => {
   const navigate = useNavigate();
   const fileRef = useRef();
 
-  const [profileUrl, setProfileUrl] = useState("");
+  // const [profileUrl, setProfileUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,16 +28,6 @@ const CreateUser = () => {
     }
   };
 
-  /** handle file upload */
-  // const handleUpload = async () => {
-  //   const file = fileRef.current.files[0];
-  //   const uploadRef = ref(storage, file.name);
-  //   uploadBytes(uploadRef, file).then(() => {
-  //     getDownloadURL(uploadRef).then((res) => {
-  //       setProfileUrl(res);
-  //     });
-  //   });
-  // };
 
   const handleSubmit = async (values) => {
     try {

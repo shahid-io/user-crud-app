@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../styles/UserCard.css";
 import { Link } from "react-router-dom";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import Loading from "./Loading";
 
 const UserCard = (props) => {
   const {
@@ -22,6 +25,9 @@ const UserCard = (props) => {
   } = props;
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const fileRef = useRef(null);
+  const [profileImage, setProfileImage] = useState(profile);
+  const [loading, setLoading] = useState(false);
 
   const handleDelete = () => {
     deleteUser();
@@ -34,10 +40,27 @@ const UserCard = (props) => {
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setLoading(false)
   };
 
-  const handleUpdate = (values) => {
-    updateUser(values);
+  const handleUpdate = async (values) => {
+    const { firstName, lastName, email, phone, address } = values;
+    const updatedUser = {
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      profile: profile,
+    };
+    const file = fileRef.current.files[0];
+    if (file) {
+      const storageRef = ref(storage, file.name);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      updatedUser.profile = downloadURL;
+    }
+    updateUser(updatedUser);
     setShowUpdateModal(false);
   };
 
@@ -48,7 +71,6 @@ const UserCard = (props) => {
   const handleCloseUpdateModal = () => {
     setShowUpdateModal(false);
   };
-  /** profile update code */
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("First Name is required"),
@@ -57,11 +79,22 @@ const UserCard = (props) => {
     phone: Yup.string().required("Phone is required"),
   });
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="container p-5">
       <div className="card user-card p-3">
         <div className="profile-container">
-          <img src={profile} alt="Profile" className="profile_img" />
+          <img src={profileImage} alt="Profile" className="profile_img" />
         </div>
         <h2>
           {firstName} {lastName}
@@ -97,7 +130,6 @@ const UserCard = (props) => {
           <Modal.Header closeButton>
             <Modal.Title>Confirm Update User</Modal.Title>
           </Modal.Header>
-
           <Modal.Body>
             <Formik
               initialValues={{
@@ -116,7 +148,7 @@ const UserCard = (props) => {
                   <div className="container mb-3">
                     <label htmlFor="profile">
                       <img
-                        src={profile}
+                        src={profileImage}
                         alt="profile"
                         className="rounded-pill profile_img"
                       />
@@ -127,6 +159,8 @@ const UserCard = (props) => {
                         className={`form-control ${
                           errors.profile && touched.profile ? "is-invalid" : ""
                         }`}
+                        ref={fileRef}
+                        onChange={handleFileChange}
                       />
                     </label>
                     <ErrorMessage
@@ -154,7 +188,7 @@ const UserCard = (props) => {
                       className="invalid-feedback"
                     />
                   </div>
-
+                  {/* lastname */}
                   <div className="mb-3">
                     <label htmlFor="lastName">Last Name</label>
                     <Field
@@ -173,7 +207,7 @@ const UserCard = (props) => {
                   </div>
                   {/* email */}
                   <div className="mb-3">
-                    <label htmlFor="firstName">Email</label>
+                    <label htmlFor="email">Email</label>
                     <Field
                       type="text"
                       id="email"
@@ -222,10 +256,16 @@ const UserCard = (props) => {
                       className="invalid-feedback"
                     />
                   </div>
-
-                  <Button type="submit" variant="outline-primary">
-                    Update
-                  </Button>
+                  <div className="d-flex gap-5">
+                    <div>{loading ? <Loading /> : null}</div>
+                    <Button
+                      type="submit"
+                      variant="outline-primary"
+                      onClick={() => setLoading(true)}
+                    >
+                      Update
+                    </Button>
+                  </div>
                 </Form>
               )}
             </Formik>
