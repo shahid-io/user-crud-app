@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
 import UserCard from "./UserCard";
-import { BsArrowReturnLeft } from "react-icons/bs";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -43,8 +40,8 @@ const Users = () => {
   };
 
   return (
-    <div className="container">
-      <div className="p-3">
+    <div className="mb-5">
+      <div className="container w-50">
         {users.map((user) => (
           <UserCard
             key={user._id}
@@ -58,15 +55,6 @@ const Users = () => {
             updateUser={(updatedUser) => handleUpdate(user._id, updatedUser)}
           ></UserCard>
         ))}
-        {users.length > 0 ? (
-          <Link className="end">
-            <BsArrowReturnLeft
-              className="back-btn"
-              size={40}
-              onClick={() => navigate(-1)}
-            />
-          </Link>
-        ) : null}
       </div>
     </div>
   );

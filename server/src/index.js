@@ -12,11 +12,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-/** routes */
+/** api check end point */
 app.get("/", (req, res) => {
   res.status(201).json({ message: "Up" });
 });
-
+ 
 app.post("/createuser", async (req, res) => {
   try {
     const { firstName, lastName, email, phone, address, profile } = req.body;

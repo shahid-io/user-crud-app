@@ -1,0 +1,12 @@
+.footer {
+    background: #f0f0f0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+li {
+    list-style: none;
+}
