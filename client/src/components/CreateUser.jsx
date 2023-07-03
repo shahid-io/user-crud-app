@@ -5,14 +5,18 @@ import * as Yup from "yup";
 import "../styles/CreateUser.css";
 import { storage } from "../firebase";
 import Button from "react-bootstrap/Button";
+
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import avatar from "../assets/profile.png";
 import axios from "axios";
+import Loading from "./Loading";
 const CreateUser = () => {
   const navigate = useNavigate();
   const fileRef = useRef();
+
   const [profileUrl, setProfileUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = async () => {
     const file = await fileRef.current.files[0];
@@ -42,7 +46,7 @@ const CreateUser = () => {
       const uploadRef = ref(storage, file.name);
       await uploadBytes(uploadRef, file);
       const downloadURL = await getDownloadURL(uploadRef);
-      alert(downloadURL);
+      console.log(downloadURL);
       await axios.post("http://localhost:3010/createuser", {
         ...values,
         profile: downloadURL,
@@ -169,8 +173,13 @@ const CreateUser = () => {
                 className="text-danger"
               />
             </div>
-
-            <Button variant="outline-dark" type="submit" className="mb-2">
+            <div>{loading ? <Loading /> : null}</div>
+            <Button
+              variant="outline-dark"
+              type="submit"
+              className="mb-2"
+              onClick={() => setLoading(true)}
+            >
               Submit
             </Button>
           </Form>

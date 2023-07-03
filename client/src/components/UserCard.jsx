@@ -49,36 +49,6 @@ const UserCard = (props) => {
     setShowUpdateModal(false);
   };
   /** profile update code */
-  // const fileRef = useRef();
-  // const [profileUrl, setProfileUrl] = useState("");
-  // const [previousUrl, setPreviousUrl] = useState(profile);
-  // const [isProfileChanged, setIsProfileChanged] = useState(false);
-
-  // const handleFileChange = async () => {
-  //   const file = await fileRef.current.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = async () => {
-  //       setPreviousUrl(reader.result);
-  //       setProfileUrl(reader.result);
-  //     };
-  //     reader.readAsDataURL(file);
-  //     setIsProfileChanged(true);
-  //   }
-  // };
-
-  // /** handle file upload */
-  // const handleUpload = async (values) => {
-  //   if (isProfileChanged) {
-  //     const file = fileRef.current.files[0];
-  //     const uploadRef = ref(storage, file.name);
-  //     await uploadBytes(uploadRef, file);
-  //     const downloadURL = await getDownloadURL(uploadRef);
-  //     values.profile = downloadURL;
-  //   }
-  //   updateUser(values);
-  //   setShowUpdateModal(false);
-  // };
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("First Name is required"),
@@ -253,11 +223,7 @@ const UserCard = (props) => {
                     />
                   </div>
 
-                  <Button
-                    type="submit"
-                    variant="outline-primary"
-                    // onClick={handleUpload}
-                  >
+                  <Button type="submit" variant="outline-primary">
                     Update
                   </Button>
                 </Form>
