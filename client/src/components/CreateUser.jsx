@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, validateYupSchema } from "formik";
 import * as Yup from "yup";
 import "../styles/CreateUser.css";
 import Button from "react-bootstrap/Button";
@@ -8,14 +8,24 @@ import { storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import avatar from "../assets/profile.png";
 import axios from "axios";
-import Loading from "./Loading";
+// test code
+import Spinner from "react-bootstrap/Spinner";
+/** validation schema */
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required("First Name is required"),
+  lastName: Yup.string().required("Last Name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  phone: Yup.string().required("Phone is required"),
+  address: Yup.string().required("Address is required"),
+});
+
 const CreateUser = () => {
   const navigate = useNavigate();
   const fileRef = useRef();
+  // const [spinner, setSpinner] = useState(false);
 
   // const [profileUrl, setProfileUrl] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleFileChange = async () => {
     const file = await fileRef.current.files[0];
@@ -28,9 +38,19 @@ const CreateUser = () => {
     }
   };
 
-
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
+      // test code
+      const formValid = await validationSchema.isValid(values);
+      console.log("form valid-----------" + formValid);
+      if (!formValid) {
+        return;
+      }
+
+      /** test code */
+      // setSpinner(true);
+      /** test code */
+
       const file = fileRef.current.files[0];
       const uploadRef = ref(storage, file.name);
       await uploadBytes(uploadRef, file);
@@ -44,16 +64,10 @@ const CreateUser = () => {
       navigate("/users");
     } catch (err) {
       console.log(err);
+    } finally {
+      setSubmitting(false);
     }
   };
-
-  const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required("First Name is required"),
-    lastName: Yup.string().required("Last Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    phone: Yup.string().required("Phone is required"),
-    address: Yup.string().required("Address is required"),
-  });
 
   return (
     <div className="user-wrapper">
@@ -69,7 +83,7 @@ const CreateUser = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, isSubmitting }) => (
           <Form className="container d-flex flex-column align-items-center">
             <div className="mb-3">
               <label htmlFor="profilePicture">
@@ -89,12 +103,13 @@ const CreateUser = () => {
               </label>
             </div>
             <div className="mb-3">
-              <label htmlFor="firstName">First Name</label>
+              {/* <label htmlFor="firstName">First Name</label> */}
               <Field
                 type="text"
                 id="firstName"
                 name="firstName"
                 className="form-control"
+                placeholder="First Name"
               />
               <ErrorMessage
                 name="firstName"
@@ -104,12 +119,13 @@ const CreateUser = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="lastName">Last Name</label>
+              {/* <label htmlFor="lastName">Last Name</label> */}
               <Field
                 type="text"
                 id="lastName"
                 name="lastName"
                 className="form-control"
+                placeholder="Last Name"
               />
               <ErrorMessage
                 name="lastName"
@@ -119,12 +135,13 @@ const CreateUser = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="email">Email</label>
+              {/* <label htmlFor="email">Email</label> */}
               <Field
                 type="email"
                 id="email"
                 name="email"
                 className="form-control"
+                placeholder="Email"
               />
               <ErrorMessage
                 name="email"
@@ -134,12 +151,13 @@ const CreateUser = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="phone">Phone</label>
+              {/* <label htmlFor="phone">Phone</label> */}
               <Field
                 type="text"
                 id="phone"
                 name="phone"
                 className="form-control"
+                placeholder="phone"
               />
               <ErrorMessage
                 name="phone"
@@ -149,12 +167,13 @@ const CreateUser = () => {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="address">Address</label>
+              {/* <label htmlFor="address">Address</label> */}
               <Field
                 as="textarea"
                 id="address"
                 name="address"
                 className="form-control"
+                placeholder="Address"
               />
               <ErrorMessage
                 name="address"
@@ -162,14 +181,25 @@ const CreateUser = () => {
                 className="text-danger"
               />
             </div>
-            <div>{loading ? <Loading /> : null}</div>
             <Button
               variant="outline-dark"
               type="submit"
-              className="mb-2"
-              onClick={() => setLoading(true)}
+              className="mb-2 rounded-pill px-5"
+              /** test code */
+              // onClick={() => setSpinner(true)}
+              /** test code */
             >
-              Submit
+              {isSubmitting ? (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </Form>
         )}

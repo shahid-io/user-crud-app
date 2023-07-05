@@ -16,7 +16,7 @@ const Users = () => {
       }
     };
     fetchUsers();
-  }, []);
+  }, [users]);
 
   const handleDelete = async (id) => {
     try {
